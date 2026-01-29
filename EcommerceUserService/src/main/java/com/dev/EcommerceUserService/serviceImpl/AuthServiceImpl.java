@@ -4,22 +4,21 @@ import com.dev.EcommerceUserService.dto.LoginRequestDto;
 import com.dev.EcommerceUserService.dto.SignUpRequestDto;
 import com.dev.EcommerceUserService.dto.UserResponseDto;
 import com.dev.EcommerceUserService.exception.UserServiceException;
-import com.dev.EcommerceUserService.model.Session;
-import com.dev.EcommerceUserService.model.SessionStatus;
+import com.dev.EcommerceUserService.model.Token;
+import com.dev.EcommerceUserService.model.TokenStatus;
 import com.dev.EcommerceUserService.model.User;
-import com.dev.EcommerceUserService.repository.SessionRepository;
+import com.dev.EcommerceUserService.repository.TokenRepository;
 import com.dev.EcommerceUserService.repository.UserRepository;
 import com.dev.EcommerceUserService.service.AuthService;
 import com.dev.EcommerceUserService.util.JwtUtil;
 import io.jsonwebtoken.Claims;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.util.MultiValueMapAdapter;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import static com.dev.EcommerceUserService.mapper.UserMapper.toUser;
@@ -28,18 +27,18 @@ import static com.dev.EcommerceUserService.mapper.UserMapper.toUserResponseDto;
 @Service
 public class AuthServiceImpl implements AuthService {
     private UserRepository userRepository;
-    private SessionRepository sessionRepository;
+    private TokenRepository tokenRepository;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     private JwtUtil jwtUtil;
 
-    public AuthServiceImpl(UserRepository userRepository, SessionRepository sessionRepository, BCryptPasswordEncoder bCryptPasswordEncoder, JwtUtil jwtUtil) {
+    public AuthServiceImpl(UserRepository userRepository, TokenRepository tokenRepository, BCryptPasswordEncoder bCryptPasswordEncoder, JwtUtil jwtUtil) {
         this.userRepository = userRepository;
-        this.sessionRepository = sessionRepository;
+        this.tokenRepository = tokenRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.jwtUtil = jwtUtil;
     }
 
-    public ResponseEntity<UserResponseDto> login(LoginRequestDto requestDto) {
+    public Map<String, Object> login(LoginRequestDto requestDto) {
         User user = userRepository.findByEmail(requestDto.getEmail())
                 .orElseThrow(() -> new UserServiceException(
                         String.format("User with email %s not found", requestDto.getEmail()),
@@ -50,36 +49,38 @@ public class AuthServiceImpl implements AuthService {
             throw new UserServiceException("Invalid Credentials",HttpStatus.BAD_REQUEST);
         }
 
-        sessionRepository.findActiveSessionByUserEmail(user.getEmail())
-                .ifPresent(session ->
+        tokenRepository.findActiveTokenByUserEmail(user.getEmail())
+                .ifPresent(token ->
                 {
-                    session.setSessionStatus(SessionStatus.ENDED);
-                    sessionRepository.save(session);
+                    token.setTokenStatus(TokenStatus.ENDED);
+                    tokenRepository.save(token);
                 });
 
         String token = jwtUtil.generateToken(user);
-        Session session = new Session();
+        Token session = new Token();
         session.setUser(user);
         session.setToken(token);
-        session.setSessionStatus(SessionStatus.ACTIVE);
-        sessionRepository.save(session);
+        session.setTokenStatus(TokenStatus.ACTIVE);
+        tokenRepository.save(session);
 
-        UserResponseDto userResponseDto = toUserResponseDto(user);
-        MultiValueMapAdapter<String, String> headers = new MultiValueMapAdapter<>(new HashMap<>());
-        headers.add(HttpHeaders.SET_COOKIE, "auth-token:"+ token);
-        return new ResponseEntity<>(userResponseDto, headers, HttpStatus.OK);
+        HashMap<String,Object> response = new HashMap<>();
+        response.put("response",toUserResponseDto(user));
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.SET_COOKIE, token);
+        response.put("headers",headers);
+        return response;
     }
 
-    public void logout(String token, UUID userId) {
-        Session session = sessionRepository.findByTokenAndUser_Id(token, userId).orElseThrow(
+    public void logout(String jwtToken, UUID userId) {
+        Token token = tokenRepository.findByTokenAndUser_Id(jwtToken, userId).orElseThrow(
                 ()-> new UserServiceException(
                         "Token is invalid",
                         HttpStatus.BAD_REQUEST
                 )
         );
 
-        session.setSessionStatus(SessionStatus.ENDED);
-        sessionRepository.save(session);
+        token.setTokenStatus(TokenStatus.ENDED);
+        tokenRepository.save(token);
     }
 
     public UserResponseDto signUp(SignUpRequestDto request) {
@@ -88,14 +89,14 @@ public class AuthServiceImpl implements AuthService {
         return toUserResponseDto(user);
     }
 
-    public SessionStatus validate(String token) {
-        Claims claims = jwtUtil.parseToken(token);
+    public TokenStatus validate(String jwtToken) {
+        Claims claims = jwtUtil.parseToken(jwtToken);
         String userId = claims.get("userId", String.class);
-        Session session = sessionRepository.findByTokenAndUser_Id(token, UUID.fromString(userId))
+        Token token = tokenRepository.findByTokenAndUser_Id(jwtToken, UUID.fromString(userId))
                 .orElseThrow(() -> new UserServiceException(
                         "Token is invalid",
                         HttpStatus.BAD_REQUEST
                 ));
-        return session.getSessionStatus();
+        return token.getTokenStatus();
     }
 }

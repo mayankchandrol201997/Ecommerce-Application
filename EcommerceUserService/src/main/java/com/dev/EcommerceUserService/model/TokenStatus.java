@@ -1,6 +1,6 @@
 package com.dev.EcommerceUserService.model;
 
-public enum SessionStatus {
+public enum TokenStatus {
     ACTIVE,
     ENDED
 }

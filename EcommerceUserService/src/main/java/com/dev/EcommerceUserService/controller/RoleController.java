@@ -4,13 +4,15 @@ import com.dev.EcommerceUserService.dto.RoleResponseDto;
 import com.dev.EcommerceUserService.service.RoleService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
+
+import static com.dev.EcommerceUserService.util.UserServiceUtil.buildResponseEntity;
 
 @RestController
-@RequestMapping("/roles")
+@RequestMapping("/role")
 public class RoleController {
     private RoleService roleService;
 
@@ -18,9 +20,15 @@ public class RoleController {
         this.roleService = roleService;
     }
 
-    @PostMapping
-    public ResponseEntity<RoleResponseDto> createRole(@PathVariable String roleName) {
+    @PostMapping("{name}")
+    public ResponseEntity<Map<String, Object>> createRole(@PathVariable("name") String roleName) {
         RoleResponseDto roleResponseDto = roleService.createRole(roleName);
-        return new ResponseEntity<>(roleResponseDto, HttpStatus.OK);
+        return buildResponseEntity(roleResponseDto, HttpStatus.CREATED);
+    }
+
+    @GetMapping
+    public ResponseEntity<Map<String, Object>> getAllRole() {
+        List<RoleResponseDto> roleResponseDto = roleService.getAllRole();
+        return buildResponseEntity(roleResponseDto, HttpStatus.OK);
     }
 }

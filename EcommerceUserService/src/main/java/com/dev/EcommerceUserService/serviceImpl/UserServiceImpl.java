@@ -10,10 +10,7 @@ import com.dev.EcommerceUserService.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static com.dev.EcommerceUserService.mapper.UserMapper.toUserResponseDto;
 
@@ -37,6 +34,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponseDto setUserRoles(UUID userid, List<UUID> roleIds) {
+        if(roleIds.isEmpty())
+            throw new UserServiceException("roleId cant be empty.", HttpStatus.BAD_REQUEST);
+
         User user = userRepository.findById(userid).orElseThrow(
                 () -> new UserServiceException("User not found with id "+userid, HttpStatus.NOT_FOUND));
 
@@ -44,7 +44,7 @@ public class UserServiceImpl implements UserService {
         if(roles.isEmpty())
             throw new UserServiceException("Role not found for the given roleId", HttpStatus.NOT_FOUND);
 
-        user.setRoles(Set.copyOf(roles));
+        user.getRoles().addAll(new HashSet<>(roles));
         user = userRepository.save(user);
         return toUserResponseDto(user);
     }

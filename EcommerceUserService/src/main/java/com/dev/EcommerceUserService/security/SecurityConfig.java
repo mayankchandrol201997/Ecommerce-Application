@@ -18,14 +18,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filteringCriteria(HttpSecurity http) throws Exception {
         http
+                .httpBasic(Customizer.withDefaults())
                 .cors(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
-                        .anyRequest().authenticated()
+                        //.anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 );
-
         return http.build();
     }
-
 }
