@@ -84,6 +84,11 @@ public class AuthServiceImpl implements AuthService {
     }
 
     public UserResponseDto signUp(SignUpRequestDto request) {
+        String email = request.getEmail();
+        if(userRepository.findByEmail(email).isPresent()){
+            throw new UserServiceException(
+                    "user already exists with emailId "+email, HttpStatus.CONFLICT);
+        }
         User user = toUser(request);
         user = userRepository.save(user);
         return toUserResponseDto(user);

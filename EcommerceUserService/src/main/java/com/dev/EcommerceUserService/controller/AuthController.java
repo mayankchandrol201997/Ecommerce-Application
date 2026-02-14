@@ -6,6 +6,7 @@ import com.dev.EcommerceUserService.dto.UserResponseDto;
 import com.dev.EcommerceUserService.exception.UserServiceException;
 import com.dev.EcommerceUserService.model.TokenStatus;
 import com.dev.EcommerceUserService.service.AuthService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,7 +26,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, Object>> login(@RequestBody LoginRequestDto request) {
+    public ResponseEntity<Map<String, Object>> login(@Valid @RequestBody LoginRequestDto request) {
         return buildResponseEntity(authService.login(request),HttpStatus.OK);
     }
 
@@ -37,7 +38,7 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<Map<String, Object>> signUp(@RequestBody SignUpRequestDto request) {
+    public ResponseEntity<Map<String, Object>> signUp(@Valid @RequestBody SignUpRequestDto request) {
         UserResponseDto userResponseDto = authService.signUp(request);
         return buildResponseEntity(userResponseDto, HttpStatus.CREATED);
     }
