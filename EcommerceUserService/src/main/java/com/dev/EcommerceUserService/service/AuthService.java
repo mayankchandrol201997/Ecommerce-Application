@@ -10,7 +10,7 @@ import java.util.UUID;
 
 public interface AuthService {
     Map<String, Object> login(LoginRequestDto requestDto);
-    void logout(String jwtToken, UUID userId);
+    void logout(String jwtToken);
     UserResponseDto signUp(SignUpRequestDto request);
     TokenStatus validate(String jwtToken);
 }

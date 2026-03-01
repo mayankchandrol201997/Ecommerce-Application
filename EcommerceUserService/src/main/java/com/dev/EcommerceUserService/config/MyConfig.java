@@ -8,6 +8,13 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
+import java.io.InputStream;
+import java.security.Key;
+import java.security.KeyStore;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.security.cert.Certificate;
+
 @Configuration
 public class MyConfig {
     @Bean
@@ -28,4 +35,40 @@ public class MyConfig {
 //                );
 //        return http.build();
 //    }
+
+    @Bean
+    public PublicKey loadPublicKey() throws Exception {
+
+        KeyStore keyStore = KeyStore.getInstance("JKS");
+
+        try (InputStream is =
+                     getClass().getClassLoader().getResourceAsStream("userService.jks")) {
+
+            keyStore.load(is, "userService".toCharArray());
+        }
+
+        Certificate certificate = keyStore.getCertificate("userService");
+
+        return certificate.getPublicKey();
+    }
+
+    @Bean
+    public PrivateKey loadPrivateKey() throws Exception {
+
+        KeyStore keyStore = KeyStore.getInstance("JKS");
+
+        try (InputStream is =
+                     getClass().getClassLoader().getResourceAsStream("userService.jks")) {
+
+            keyStore.load(is, "userService".toCharArray());
+        }
+
+        Key key = keyStore.getKey("userService", "userService".toCharArray());
+
+        if (key instanceof PrivateKey privateKey) {
+            return privateKey;
+        }
+
+        throw new RuntimeException("Private key not found");
+    }
 }

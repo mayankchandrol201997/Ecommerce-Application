@@ -23,7 +23,7 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public RoleResponseDto createRole(String roleName) {
         Role role = new Role();
-        role.setRole(roleName);
+        role.setRoleName(roleName);
         role = rolesRepository.save(role);
         return toRoleResponseDto(role);
     }

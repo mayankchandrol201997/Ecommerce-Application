@@ -30,10 +30,10 @@ public class AuthController {
         return buildResponseEntity(authService.login(request),HttpStatus.OK);
     }
 
-    @PostMapping("/logout/{id}")
-    public ResponseEntity<Void> logout(@PathVariable("id") UUID userId, @RequestHeader("Authorization") String token) {
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(@RequestHeader("Authorization") String token) {
         String Jwt_token = extractToken(token);
-        authService.logout(Jwt_token, userId);
+        authService.logout(Jwt_token);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
@@ -43,19 +43,13 @@ public class AuthController {
         return buildResponseEntity(userResponseDto, HttpStatus.CREATED);
     }
 
-    @PostMapping("/validate")
+    @GetMapping("/validate")
     public ResponseEntity<Map<String, Object>> validateToken(@RequestHeader("Authorization") String token) {
         TokenStatus sessionStatus = authService.validate(extractToken(token));
         return buildResponseEntity(sessionStatus, HttpStatus.OK);
     }
 
     private String extractToken(String header) {
-        if (header == null || !header.startsWith("Bearer ")) {
-            throw new UserServiceException(
-                    "Invalid Authorization header",
-                    HttpStatus.BAD_REQUEST
-            );
-        }
         return header.substring(7);
     }
 }

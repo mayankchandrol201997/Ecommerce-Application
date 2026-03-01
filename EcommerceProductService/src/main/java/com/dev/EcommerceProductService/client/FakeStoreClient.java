@@ -58,6 +58,7 @@ public class FakeStoreClient {
         RestTemplate restTemplate = restTemplateBuilder.build();
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
+
         HttpEntity<FakeStoreProductRequestDto> requestEntity =
                 new HttpEntity<>(fakeStoreProductRequestDto, headers);
 

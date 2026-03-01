@@ -22,7 +22,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Map<String, Object>> getUserDetails(@PathVariable("id") UUID userId) {
+    public ResponseEntity<Map<String, Object>> getUserById(@PathVariable("id") UUID userId) {
         UserResponseDto userResponseDto = userService.getUserDetails(userId);
         return buildResponseEntity(userResponseDto, HttpStatus.OK);
     }

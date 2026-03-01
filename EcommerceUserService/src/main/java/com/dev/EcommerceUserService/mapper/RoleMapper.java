@@ -8,7 +8,7 @@ public class RoleMapper {
     public static RoleResponseDto toRoleResponseDto(Role role){
         RoleResponseDto roleResponseDto = new RoleResponseDto();
         roleResponseDto.setId(role.getId());
-        roleResponseDto.setRole(role.getRole());
+        roleResponseDto.setRole(role.getRoleName());
         return roleResponseDto;
     }
 }

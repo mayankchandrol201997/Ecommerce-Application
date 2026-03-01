@@ -1,0 +1,2 @@
+ALTER TABLE token
+    MODIFY COLUMN token TEXT;

@@ -15,4 +15,6 @@ public interface TokenRepository extends JpaRepository<Token, UUID> {
 
     @Query(value = CustomQueries.FIND_ACTIVE_SESSION_BY_USER_EMAIL, nativeQuery = true)
     Optional<Token> findActiveTokenByUserEmail(@Param("email") String email);
+
+    Optional<Token> findByToken(String jwtToken);
 }
