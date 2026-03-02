@@ -75,9 +75,9 @@ public class SecurityConfig {
 	public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http)
 			throws Exception {
 		http
-				.sessionManagement(session ->
-						session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-				)
+//				.sessionManagement(session ->
+//						session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+//				)
 			.authorizeHttpRequests((authorize) -> authorize
 					.requestMatchers("/auth/signup","/auth/validate","/auth/login").permitAll()
 					.requestMatchers("/role/**").hasAuthority("ADMIN")
@@ -88,10 +88,10 @@ public class SecurityConfig {
 				.cors(AbstractHttpConfigurer::disable)
 				.csrf(AbstractHttpConfigurer::disable)
 				.addFilterBefore(jwtAuthenticationFilter,
-						UsernamePasswordAuthenticationFilter.class);
+						UsernamePasswordAuthenticationFilter.class)
 			// Form login handles the redirect to the login page from the
 			// authorization server filter chain
-			//.formLogin(Customizer.withDefaults());
+			.formLogin(Customizer.withDefaults());
 				//.httpBasic(Customizer.withDefaults());
 		return http.build();
 	}
