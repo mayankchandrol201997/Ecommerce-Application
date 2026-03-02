@@ -4,6 +4,7 @@ import com.dev.EcommerceUserService.dto.UserResponseDto;
 import com.dev.EcommerceUserService.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +23,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasAuthority('ADMIN') or #userId == authentication.principal.id")
     public ResponseEntity<Map<String, Object>> getUserById(@PathVariable("id") UUID userId) {
         UserResponseDto userResponseDto = userService.getUserDetails(userId);
         return buildResponseEntity(userResponseDto, HttpStatus.OK);

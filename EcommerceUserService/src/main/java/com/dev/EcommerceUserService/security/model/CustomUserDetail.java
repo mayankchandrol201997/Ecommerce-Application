@@ -9,8 +9,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
+
 @JsonDeserialize
 public class CustomUserDetail implements UserDetails {
+    private UUID id;
     private String username;
     private String password;
     private boolean isAccountNonExpired;
@@ -52,6 +55,7 @@ public class CustomUserDetail implements UserDetails {
 
     public CustomUserDetail(User user)
     {
+        this.id = user.getId();
         this.username = user.getEmail();
         this.password = user.getPassword();
         this.isAccountNonExpired = true;
@@ -64,6 +68,15 @@ public class CustomUserDetail implements UserDetails {
             authorities.add(new CustomGrantedAuthority(role));
         }
     }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return authorities;
