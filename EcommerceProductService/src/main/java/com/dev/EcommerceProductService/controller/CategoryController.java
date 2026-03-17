@@ -1,8 +1,11 @@
 package com.dev.EcommerceProductService.controller;
 
+import com.dev.EcommerceProductService.client.UserServiceClient;
 import com.dev.EcommerceProductService.dto.CategoryRequestDto;
 import com.dev.EcommerceProductService.dto.CategoryResponseDto;
+import com.dev.EcommerceProductService.dto.TokenValidationResponseDto;
 import com.dev.EcommerceProductService.service.CategoryService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,7 +20,10 @@ import static com.dev.EcommerceProductService.util.ProductUtil.buildResponseEnti
 @RequestMapping("/category")
 public class CategoryController {
 
+
     private CategoryService categoryService;
+    @Autowired
+    private UserServiceClient userServiceClient;
 
     public CategoryController(CategoryService categoryService) {
         this.categoryService = categoryService;

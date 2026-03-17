@@ -2,6 +2,7 @@ package com.dev.EcommerceUserService.serviceImpl;
 
 import com.dev.EcommerceUserService.dto.LoginRequestDto;
 import com.dev.EcommerceUserService.dto.SignUpRequestDto;
+import com.dev.EcommerceUserService.dto.TokenValidationResponseDto;
 import com.dev.EcommerceUserService.dto.UserResponseDto;
 import com.dev.EcommerceUserService.exception.UserServiceException;
 import com.dev.EcommerceUserService.model.Role;
@@ -101,10 +102,22 @@ public class AuthServiceImpl implements AuthService {
         return toUserResponseDto(user);
     }
 
-    public TokenStatus validate(String jwtToken) {
+    public TokenValidationResponseDto validate(String jwtToken) {
+        System.out.println("jwtToken-----"+jwtToken);
+
+        Claims claims = jwtUtil.parseToken(jwtToken);
+
         Token token = tokenRepository.findByToken(jwtToken).orElseThrow(() -> new UserServiceException(
                 "Token is invalid",
                 HttpStatus.BAD_REQUEST
-        ));        return token.getTokenStatus();
+        ));
+
+        TokenValidationResponseDto tokenValidationResponseDto = new TokenValidationResponseDto();
+        tokenValidationResponseDto.setStatus(String.valueOf(token.getTokenStatus()));
+        List<String> roles = claims.get("roles", List.class);
+        tokenValidationResponseDto.setRoles(roles);
+        tokenValidationResponseDto.setEmail(token.getUser().getEmail());
+        tokenValidationResponseDto.setUserId(token.getUser().getId());
+        return tokenValidationResponseDto;
     }
 }

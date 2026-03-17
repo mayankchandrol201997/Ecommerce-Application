@@ -1,30 +1,27 @@
-package com.dev.EcommerceProductService.config;
+package com.dev.EcommerceProductService.security;
 
+import com.dev.EcommerceProductService.security.filter.CustomAuthFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.convert.converter.Converter;
-import org.springframework.lang.Nullable;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
+import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.stream.Collectors;
-
 @Configuration
-public class MyConfig {
+public class SecurityConfig {
+
+    private CustomAuthFilter customAuthFilter;
+
+    public SecurityConfig(CustomAuthFilter customAuthFilter) {
+        this.customAuthFilter = customAuthFilter;
+    }
 
     @Bean
     public JwtAuthenticationConverter jwtAuthConverter(){
         JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-        jwtGrantedAuthoritiesConverter.setAuthorityPrefix("roles");
+        //jwtGrantedAuthoritiesConverter.setAuthorityPrefix("roles");
         jwtGrantedAuthoritiesConverter.setAuthorityPrefix("");
 
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
@@ -37,7 +34,8 @@ public class MyConfig {
         http.oauth2ResourceServer().jwt().jwtAuthenticationConverter(jwtAuthConverter());
         http.authorizeHttpRequests(
                 authorizeRequests -> authorizeRequests.anyRequest().authenticated()
-        );;
+        );
+        http.addFilterBefore(customAuthFilter, BearerTokenAuthenticationFilter.class);
         return http.build();
     }
 }

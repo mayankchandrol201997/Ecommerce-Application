@@ -2,6 +2,7 @@ package com.dev.EcommerceUserService.controller;
 
 import com.dev.EcommerceUserService.dto.LoginRequestDto;
 import com.dev.EcommerceUserService.dto.SignUpRequestDto;
+import com.dev.EcommerceUserService.dto.TokenValidationResponseDto;
 import com.dev.EcommerceUserService.dto.UserResponseDto;
 import com.dev.EcommerceUserService.exception.UserServiceException;
 import com.dev.EcommerceUserService.model.TokenStatus;
@@ -45,8 +46,9 @@ public class AuthController {
 
     @GetMapping("/validate")
     public ResponseEntity<Map<String, Object>> validateToken(@RequestHeader("Authorization") String token) {
-        TokenStatus sessionStatus = authService.validate(extractToken(token));
-        return buildResponseEntity(sessionStatus, HttpStatus.OK);
+        System.out.println("controller----------"+token);
+        TokenValidationResponseDto tokenValidationResponseDto = authService.validate(extractToken(token));
+        return buildResponseEntity(tokenValidationResponseDto, HttpStatus.OK);
     }
 
     private String extractToken(String header) {

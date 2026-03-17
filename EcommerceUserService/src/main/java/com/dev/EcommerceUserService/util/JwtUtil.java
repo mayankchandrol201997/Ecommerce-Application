@@ -47,13 +47,14 @@ public class JwtUtil {
                 .toList();
 
         return Jwts.builder()
-                .subject(user.getName())
+                .subject(user.getId().toString())
+                .issuer("https://localhost:8888")
                 .issuedAt(Date.from(createdAt))
                 .expiration(Date.from(expiryAt))
                 .claim("userId", user.getId())
                 .claim("email", user.getEmail())
                 .claim("roles", roles)
-                .signWith(privateKey,algorithm)
+                .signWith(privateKey, algorithm)
                 .compact();
     }
 
