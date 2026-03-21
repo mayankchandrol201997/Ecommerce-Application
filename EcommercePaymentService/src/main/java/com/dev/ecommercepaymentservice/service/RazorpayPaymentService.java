@@ -40,7 +40,7 @@ public class RazorpayPaymentService implements PaymentService{
         paymentLinkRequest.put("reminder_enable",true);
 
         JSONObject notes = new JSONObject();
-        notes.put("Pament for orderId ",orderId);
+        notes.put("Payment for orderId ",orderId);
         paymentLinkRequest.put("notes",notes);
         paymentLinkRequest.put("callback_url","https://google.com/");
         paymentLinkRequest.put("callback_method","get");

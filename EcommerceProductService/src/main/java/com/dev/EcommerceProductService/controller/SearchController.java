@@ -1,7 +1,7 @@
 package com.dev.EcommerceProductService.controller;
 
 import com.dev.EcommerceProductService.dto.ProductResponseDto;
-import com.dev.EcommerceProductService.dto.search.FilterDto;
+import com.dev.EcommerceProductService.dto.SpecificationSearchRequestDTO;
 import com.dev.EcommerceProductService.dto.search.SearchRequestDto;
 import com.dev.EcommerceProductService.dto.search.SearchResponseDto;
 import com.dev.EcommerceProductService.dto.search.SortingCriteria;
@@ -10,8 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/search")
@@ -27,5 +25,17 @@ public class SearchController {
                                                     @RequestParam("pageSize") int pageSize)
     {
         return ResponseEntity.ok(searchService.search(query,searchRequestDto.getFilter(),sortingCriteria,pageNumber,pageSize));
+    }
+
+    @GetMapping("/specification")
+    public ResponseEntity<Page<ProductResponseDto>> searchSpecification(
+            @ModelAttribute SpecificationSearchRequestDTO specificationSearchRequest,
+            @RequestParam int pageNumber,
+            @RequestParam int pageSize
+    ) {
+
+        return ResponseEntity.ok(searchService.searchSpecification(
+                specificationSearchRequest.getSearchCriteria(),
+                pageNumber,pageSize));
     }
 }

@@ -14,8 +14,18 @@ public class OrderUtil {
         Map<String, Object> responseMap = new HashMap<>();
         responseMap.put("response", response.get("response"));
         responseMap.put("message", "Success");
+
         HttpHeaders headers = new HttpHeaders();
         headers.add("paymentLink", String.valueOf(response.get("paymentLink")));
+
         return new ResponseEntity<>(responseMap, headers, httpStatus);
+    }
+
+    public static ResponseEntity<Map<String,Object>> buildResponseEntity(Object response, HttpStatus httpStatus)
+    {
+        HashMap<String,Object> responseMap = new HashMap<>();
+        responseMap.put("response",response);
+        responseMap.put("message","Success");
+        return new ResponseEntity<>(responseMap,httpStatus);
     }
 }

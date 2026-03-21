@@ -1,19 +1,25 @@
-package com.dev.EcommerceProductService.serviceImpl.filteringService;
+package com.dev.EcommerceProductService.serviceImpl;
 
 import com.dev.EcommerceProductService.dto.ProductResponseDto;
 import com.dev.EcommerceProductService.dto.search.FilterDto;
 import com.dev.EcommerceProductService.dto.search.SearchResponseDto;
 import com.dev.EcommerceProductService.dto.search.SortingCriteria;
+import com.dev.EcommerceProductService.mapper.ProductMapper;
 import com.dev.EcommerceProductService.model.Product;
 import com.dev.EcommerceProductService.repository.ProductRepository;
 import com.dev.EcommerceProductService.service.SearchService;
+import com.dev.EcommerceProductService.serviceImpl.filteringService.FilterFactory;
+import com.dev.EcommerceProductService.serviceImpl.filteringService.Filters;
 import com.dev.EcommerceProductService.serviceImpl.sortingService.Sorting;
 import com.dev.EcommerceProductService.serviceImpl.sortingService.SorterFactory;
+import com.dev.EcommerceProductService.specification.SearchCriteria;
+import com.dev.EcommerceProductService.specification.SpecificationBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -60,5 +66,18 @@ public class SearchServiceImpl implements SearchService {
         searchResponseDto.setProductResponseDto(productResponseDtoPage);
 
         return searchResponseDto;
+    }
+
+    public Page<ProductResponseDto> searchSpecification(List<SearchCriteria> searchCriteria, int pageNumber, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+
+        SpecificationBuilder<Product> specificationBuilder = new SpecificationBuilder<>();
+        specificationBuilder.setSearchCriteria(searchCriteria);
+
+        Specification<Product> productSpecification = specificationBuilder.build();
+
+        Page<ProductResponseDto> productResponseDTOS = productRepository.findAll(productSpecification,pageable)
+                .map(ProductMapper::toProductResponseDto);
+        return productResponseDTOS;
     }
 }

@@ -4,6 +4,8 @@ import com.dev.ecommerceorderservice.dto.ApiResponse;
 import com.dev.ecommerceorderservice.dto.TokenValidationResponseDto;
 import com.dev.ecommerceorderservice.dto.User;
 import com.dev.ecommerceorderservice.exception.OrderServiceException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,8 +29,9 @@ public class PaymentServiceClient {
         this.restTemplateBuilder = restTemplateBuilder;
     }
 
-    public String createPaymentLink(Long orderId, User user) {
+    public String createPaymentLink(Long orderId, User user) throws JsonProcessingException {
         ResponseEntity<ApiResponse<String>> response = null;
+        ObjectMapper mapper = new ObjectMapper();
         try {
             System.out.println("INSIDE createPaymentLink TOKEN");
 
@@ -50,7 +53,15 @@ public class PaymentServiceClient {
                             }, orderId
                     );
         }
+        catch (HttpClientErrorException e) {
+            System.out.println("qwertyuiop---------------"+e.getResponseBodyAsString());
+            ApiResponse<String> apiResponse = mapper.readValue(
+                            e.getResponseBodyAsString(),
+                            new TypeReference<ApiResponse<String>>() {});
+            throw new OrderServiceException(apiResponse.getResponse(),HttpStatus.INTERNAL_SERVER_ERROR);
+        }
         catch (Exception e) {
+            System.out.println("qwertyuiop---------------"+e.getMessage());
             throw new OrderServiceException(e.getMessage(),HttpStatus.BAD_REQUEST);
         }
         System.out.println("qwertyuiop---------------"+response.getBody().getResponse());

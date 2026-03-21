@@ -54,7 +54,6 @@ public class UserServiceClient {
             return apiResponse.getResponse();
         } catch (HttpClientErrorException ex) {
             return buildErrorResponse("INVALID");
-
         } catch (HttpServerErrorException ex) {
             return buildErrorResponse("ERROR");
         }
