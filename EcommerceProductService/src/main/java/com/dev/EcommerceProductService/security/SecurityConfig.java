@@ -3,6 +3,7 @@ package com.dev.EcommerceProductService.security;
 import com.dev.EcommerceProductService.security.filter.CustomAuthFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
@@ -19,9 +20,9 @@ public class SecurityConfig {
     }
 
     @Bean
-    public JwtAuthenticationConverter jwtAuthConverter(){
+    public JwtAuthenticationConverter jwtAuthConverter() {
         JwtGrantedAuthoritiesConverter jwtGrantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-        //jwtGrantedAuthoritiesConverter.setAuthorityPrefix("roles");
+        jwtGrantedAuthoritiesConverter.setAuthoritiesClaimName("roles");
         jwtGrantedAuthoritiesConverter.setAuthorityPrefix("");
 
         JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
@@ -32,10 +33,13 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.oauth2ResourceServer().jwt().jwtAuthenticationConverter(jwtAuthConverter());
-        http.authorizeHttpRequests(
-                authorizeRequests -> authorizeRequests.anyRequest().authenticated()
+        http.authorizeHttpRequests(authorizeRequests -> authorizeRequests
+                .requestMatchers(HttpMethod.GET, "/product/{id}", "/product", "/search/**").hasAnyAuthority("USER", "ADMIN")
+                .requestMatchers("/product/**", "/category/**").hasAuthority("ADMIN")
+                .anyRequest().authenticated()
         );
         http.addFilterBefore(customAuthFilter, BearerTokenAuthenticationFilter.class);
+
         return http.build();
     }
 }

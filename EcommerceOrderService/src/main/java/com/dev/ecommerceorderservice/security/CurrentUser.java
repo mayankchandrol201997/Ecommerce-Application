@@ -1,10 +1,14 @@
 package com.dev.ecommerceorderservice.security;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
 import java.util.UUID;
 
+@Getter
+@Setter
 public class CurrentUser {
 
     private UUID userId;
@@ -16,13 +20,5 @@ public class CurrentUser {
         this.userId = userId;
         this.email = email;
         this.authorities = authorities;
-    }
-
-    public UUID getUserId() {
-        return userId;
-    }
-
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities;
     }
 }

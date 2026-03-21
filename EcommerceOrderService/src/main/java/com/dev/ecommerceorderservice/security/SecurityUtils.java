@@ -15,9 +15,7 @@ public class SecurityUtils {
 
         if (auth.getPrincipal() instanceof CurrentUser user) {
             return user;
-        }
-
-        if (auth instanceof JwtAuthenticationToken jwtAuth) {
+        } else if (auth instanceof JwtAuthenticationToken jwtAuth) {
             Jwt jwt = jwtAuth.getToken();
 
             return new CurrentUser(

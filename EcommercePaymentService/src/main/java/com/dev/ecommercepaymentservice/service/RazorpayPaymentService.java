@@ -1,5 +1,6 @@
 package com.dev.ecommercepaymentservice.service;
 
+import com.dev.ecommercepaymentservice.dto.User;
 import com.razorpay.PaymentLink;
 import com.razorpay.RazorpayClient;
 import com.razorpay.RazorpayException;
@@ -17,9 +18,9 @@ public class RazorpayPaymentService implements PaymentService{
     }
 
     @Override
-    public String createPaymentLink(String orderId) throws RazorpayException {
+    public String createPaymentLink(String orderId, User user) throws RazorpayException {
         JSONObject paymentLinkRequest = new JSONObject();
-        paymentLinkRequest.put("amount",1001);
+        paymentLinkRequest.put("amount",user.getAmount()*100);
         paymentLinkRequest.put("currency","INR");
         paymentLinkRequest.put("accept_partial",false);
         //paymentLinkRequest.put("first_min_partial_amount",100);
@@ -28,9 +29,9 @@ public class RazorpayPaymentService implements PaymentService{
         paymentLinkRequest.put("description","Payment for orderId ->"+ orderId);
 
         JSONObject customer = new JSONObject();
-        customer.put("name","Mayank Chandrol");
-        customer.put("contact","+917987427287");
-        customer.put("email","javahello928@gmail.com");
+        customer.put("name",user.getUserName());
+        customer.put("contact",user.getMobileNumber());
+        customer.put("email",user.getEmail());
         paymentLinkRequest.put("customer",customer);
 
         JSONObject notify = new JSONObject();

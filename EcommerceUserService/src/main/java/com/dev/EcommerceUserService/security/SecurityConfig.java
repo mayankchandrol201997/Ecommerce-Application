@@ -1,5 +1,6 @@
 package com.dev.EcommerceUserService.security;
 
+import com.dev.EcommerceUserService.security.model.CustomUserDetail;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.authority.AuthorityUtils;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.server.authorization.OAuth2TokenType;
@@ -137,11 +139,17 @@ public class SecurityConfig {
 		return (context) -> {
 			if (OAuth2TokenType.ACCESS_TOKEN.equals(context.getTokenType())) {
 				context.getClaims().claims((claims) -> {
-					Set<String> roles = AuthorityUtils.authorityListToSet(context.getPrincipal().getAuthorities())
-							.stream()
+					Set<String> roles = AuthorityUtils.authorityListToSet(context.getPrincipal().getAuthorities());
+							/*.stream()
 							.map(c->"ROLE_"+c)
-							.collect(Collectors.collectingAndThen(Collectors.toSet(), Collections::unmodifiableSet));
+							.collect(Collectors.collectingAndThen(Collectors.toSet(), Collections::unmodifiableSet));*/
 					claims.put("roles", roles);
+
+					Object principle = context.getPrincipal().getPrincipal();
+					if(principle instanceof CustomUserDetail customUserDetail) {
+						claims.put("email",  customUserDetail.getUsername());
+						claims.put("userId", customUserDetail.getId());
+					}
 				});
 			}
 		};

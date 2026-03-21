@@ -1,8 +1,14 @@
 package com.dev.ecommercepaymentservice.controller;
 
+import com.dev.ecommercepaymentservice.PaymentServiceUtil;
+import com.dev.ecommercepaymentservice.dto.User;
 import com.dev.ecommercepaymentservice.service.PaymentService;
 import com.razorpay.RazorpayException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/payment")
@@ -14,8 +20,8 @@ public class PaymentController {
     }
 
     @PostMapping("/{orderId}")
-    public String createPaymentLink(@PathVariable("orderId") String orderId) throws RazorpayException {
-        return paymentService.createPaymentLink(orderId);
+    public ResponseEntity<Map<String, Object>> createPaymentLink(@PathVariable String orderId, @RequestBody User user) throws RazorpayException {
+        return PaymentServiceUtil.buildResponseEntity(paymentService.createPaymentLink(orderId,user), HttpStatus.OK);
     }
 
     @PostMapping("/status/{orderId}")

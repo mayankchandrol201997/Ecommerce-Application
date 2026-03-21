@@ -48,7 +48,7 @@ public class JwtUtil {
 
         return Jwts.builder()
                 .subject(user.getId().toString())
-                .issuer("https://localhost:8888")
+                .issuer("https://localhost:8082")
                 .issuedAt(Date.from(createdAt))
                 .expiration(Date.from(expiryAt))
                 .claim("userId", user.getId())
