@@ -14,12 +14,12 @@ import java.util.stream.Collectors;
 public class PaymentServiceExceptionHandler {
 
     @ExceptionHandler(PaymentServiceException.class)
-    public ResponseEntity<HashMap<String, Object>> handleProductServiceException(PaymentServiceException paymentServiceException) {
+    public ResponseEntity<HashMap<String, Object>> handlePaymentServiceException(PaymentServiceException paymentServiceException) {
         return new ResponseEntity<>(buildResponseEntity(paymentServiceException.getMessage()), paymentServiceException.getHttpStatus());
     }
 
     @ExceptionHandler(RazorpayException.class)
-    public ResponseEntity<HashMap<String, Object>> handleProductServiceException(RazorpayException razorpayException) {
+    public ResponseEntity<HashMap<String, Object>> handleRazorpayException(RazorpayException razorpayException) {
         return new ResponseEntity<>(buildResponseEntity(razorpayException.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
