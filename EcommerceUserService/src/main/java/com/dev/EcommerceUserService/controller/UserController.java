@@ -2,6 +2,7 @@ package com.dev.EcommerceUserService.controller;
 
 import com.dev.EcommerceUserService.dto.UserResponseDto;
 import com.dev.EcommerceUserService.service.UserService;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,6 +17,9 @@ import static com.dev.EcommerceUserService.util.UserServiceUtil.buildResponseEnt
 @RestController
 @RequestMapping("/user")
 public class UserController {
+    @Value("${test.test}")
+    private String test;
+
     private UserService userService;
 
     public UserController(UserService userService) {
@@ -33,5 +37,11 @@ public class UserController {
     public ResponseEntity<Map<String, Object>> setUserRoles(@PathVariable("id") UUID userId, @RequestBody List<UUID> roleIds) {
         UserResponseDto userResponseDto = userService.setUserRoles(userId, roleIds);
         return buildResponseEntity(userResponseDto, HttpStatus.OK);
+    }
+
+    @GetMapping
+    public String test()
+    {
+        return test;
     }
 }
