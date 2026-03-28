@@ -6,6 +6,7 @@ import org.springframework.cloud.config.environment.PropertySource;
 import org.springframework.cloud.config.server.environment.EnvironmentRepository;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,9 +22,10 @@ public class DatabaseEnvironmentRepository implements EnvironmentRepository {
 
     @Override
     public Environment findOne(String application, String profile, String label) {
+        List<String> appNames = Arrays.asList(application, "ALL");
 
         List<ConfigProperty> props =
-                repository.findByApplicationAndProfileAndLabel(application, profile, label);
+                repository.findByApplicationInAndProfileAndLabel(appNames, profile, label);
 
         Map<String, Object> map = new HashMap<>();
 

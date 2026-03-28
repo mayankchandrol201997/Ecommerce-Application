@@ -22,10 +22,10 @@ public class UserServiceClient {
     private String userServiceBaseUrl;
     @Value("${userservice.validate.api.url}")
     private String userServiceValidateApiUrl;
-    private RestTemplateBuilder restTemplateBuilder;
+    private RestTemplate restTemplate;
 
-    public UserServiceClient(RestTemplateBuilder restTemplateBuilder) {
-        this.restTemplateBuilder = restTemplateBuilder;
+    public UserServiceClient(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
     }
 
     public TokenValidationResponseDto validateToken(String token) {
@@ -35,9 +35,6 @@ public class UserServiceClient {
             }
 
             String url = userServiceBaseUrl + userServiceValidateApiUrl;
-
-            RestTemplate restTemplate = restTemplateBuilder.build();
-
             HttpHeaders headers = new HttpHeaders();
             headers.add("Authorization",token);
             HttpEntity<Void> requestEntity = new HttpEntity<>(headers);

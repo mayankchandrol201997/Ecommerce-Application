@@ -13,10 +13,10 @@ public class ConfigProperty {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     private String application;
     private String profile;
     private String label;
     private String propKey;
     private String propValue;
+    private boolean isEncrypted;
 }

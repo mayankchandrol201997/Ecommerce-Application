@@ -17,9 +17,6 @@ import static com.dev.EcommerceUserService.util.UserServiceUtil.buildResponseEnt
 @RestController
 @RequestMapping("/user")
 public class UserController {
-    @Value("${test.test}")
-    private String test;
-
     private UserService userService;
 
     public UserController(UserService userService) {
@@ -37,11 +34,5 @@ public class UserController {
     public ResponseEntity<Map<String, Object>> setUserRoles(@PathVariable("id") UUID userId, @RequestBody List<UUID> roleIds) {
         UserResponseDto userResponseDto = userService.setUserRoles(userId, roleIds);
         return buildResponseEntity(userResponseDto, HttpStatus.OK);
-    }
-
-    @GetMapping
-    public String test()
-    {
-        return test;
     }
 }

@@ -17,11 +17,11 @@ import java.security.cert.CertificateException;
 
 @Configuration
 public class JksConfig {
-    @Value("${keyFile}")
+    @Value("${jks.key.file}")
     private String keyFile;
-    @Value("${alias}")
+    @Value("${jks.alias}")
     private String alias;
-    @Value("${password}")
+    @Value("${jks.password}")
     private String password;
 
     private JWKSet buildJWKSet() throws KeyStoreException, CertificateException, IOException, NoSuchAlgorithmException {
